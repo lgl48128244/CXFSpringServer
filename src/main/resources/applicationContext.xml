@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:context="http://www.springframework.org/schema/context" 
+xmlns:jaxws="http://cxf.apache.org/jaxws" 
+xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+		http://cxf.apache.org/jaxws 
+		http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<!-- 引入CXF Bean定义如下,早期的版本中使用 3.0以后不再使用 -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<!-- <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" /> -->
+	<!-- <import resource="classpath:META-INF/cxf/cxf-servlet.xml" /> -->
+
+	<!-- 方式一：通过类发布服务(简单发布) -->
+	<!-- <bean id="product" class="cn.itcast.cxf.dao.impl.ProductServiceImpl" /> -->
+	<!-- <jaxws:endpoint id="productService" implementor="#product" address="/productService"> -->
+	<!-- <jaxws:inInterceptors> -->
+	<!-- <bean class="org.apache.cxf.interceptor.LoggingInInterceptor"></bean> -->
+	<!-- </jaxws:inInterceptors> -->
+	<!-- <jaxws:outInterceptors> -->
+	<!-- <bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"></bean> -->
+	<!-- </jaxws:outInterceptors> -->
+	<!-- </jaxws:endpoint> -->
+
+
+	<!-- 方式二：通过接口发布服务 (常用方式) -->
+	<jaxws:server id="productServiceI" serviceClass="cn.itcast.cxf.dao.ProductService" address="/productServiceI">
+		<jaxws:serviceBean>
+			<bean class="cn.itcast.cxf.dao.impl.ProductServiceImpl"></bean>
+		</jaxws:serviceBean>
+		<jaxws:inInterceptors>
+			<bean class="org.apache.cxf.interceptor.LoggingInInterceptor"></bean>
+		</jaxws:inInterceptors>
+		<jaxws:outInterceptors>
+			<bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"></bean>
+		</jaxws:outInterceptors>
+	</jaxws:server>
+	<jaxws:server id="productServiceI2" serviceClass="cn.jbit.cxf.service.IProductService" address="/productServiceI2">
+		<jaxws:serviceBean>
+			<bean class="cn.jbit.cxf.service.impl.ProductServiceImpl"></bean>
+		</jaxws:serviceBean>
+		<!-- 单个拦截器使用，比较冗余。 -->
+		<!-- <jaxws:inInterceptors> -->
+		<!-- <bean class="org.apache.cxf.interceptor.LoggingInInterceptor"></bean> -->
+		<!-- </jaxws:inInterceptors> -->
+		<!-- <jaxws:outInterceptors> -->
+		<!-- <bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"></bean> -->
+		<!-- </jaxws:outInterceptors> -->
+		<!-- 一组拦截器，简化配置。比如：日志拦截器 -->
+		<jaxws:features>
+			<bean class="org.apache.cxf.feature.LoggingFeature"></bean>
+		</jaxws:features>
+	</jaxws:server>
+
+</beans>  
